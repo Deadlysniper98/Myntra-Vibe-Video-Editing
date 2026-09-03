@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vibe.app/motion.schema.json",
+  "title": ".motion",
+  "description": "A constrained, renderer-agnostic spec for interactive vector animation (the non-video output of Vibe).",
+  "type": "object",
+  "required": ["meta", "canvas", "timelines", "stateMachine"],
+  "additionalProperties": false,
+  "definitions": {
+    "easing": { "enum": ["linear", "easeIn", "easeOut", "easeInOut", "spring"] },
+    "animatableProperty": {
+      "enum": ["x", "y", "scaleX", "scaleY", "rotation", "opacity", "fill"]
+    },
+    "hexColor": { "type": "string", "pattern": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$" },
+    "transform": {
+      "type": "object",
+      "required": ["x", "y", "scaleX", "scaleY", "rotation"],
+      "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "scaleX": { "type": "number" },
+        "scaleY": { "type": "number" },
+        "rotation": { "type": "number" }
+      }
+    },
+    "shape": {
+      "type": "object",
+      "required": ["id", "type", "fill", "transform"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["path", "rectangle", "circle"] },
+        "fill": { "$ref": "#/definitions/hexColor" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "transform": { "$ref": "#/definitions/transform" },
+        "d": { "type": "string" },
+        "points": { "type": "array", "items": { "type": "number" } },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "radius": { "type": "number" }
+      }
+    },
+    "keyframe": {
+      "type": "object",
+      "required": ["timeMs", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "timeMs": { "type": "number", "minimum": 0 },
+        "value": { "type": ["number", "string"] },
+        "easing": { "$ref": "#/definitions/easing" }
+      }
+    },
+    "trackKeyframes": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(x|y|scaleX|scaleY|rotation|opacity|fill)$": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/keyframe" }
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "required": ["durationMs", "keyframes"],
+      "additionalProperties": false,
+      "properties": {
+        "durationMs": { "type": "number", "exclusiveMinimum": 0 },
+        "loop": { "type": "boolean" },
+        "keyframes": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/trackKeyframes" }
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["boolean", "number", "trigger"] },
+        "defaultValue": { "type": ["boolean", "number"] }
+      }
+    },
+    "state": {
+      "type": "object",
+      "required": ["timeline"],
+      "additionalProperties": false,
+      "properties": { "timeline": { "type": "string" } }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["from", "to", "condition"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "condition": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "baseWidth", "baseHeight"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string" },
+        "baseWidth": { "type": "number", "exclusiveMinimum": 0 },
+        "baseHeight": { "type": "number", "exclusiveMinimum": 0 },
+        "name": { "type": "string" }
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "required": ["shapes"],
+      "additionalProperties": false,
+      "properties": {
+        "shapes": { "type": "array", "items": { "$ref": "#/definitions/shape" } }
+      }
+    },
+    "timelines": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/timeline" }
+    },
+    "stateMachine": {
+      "type": "object",
+      "required": ["inputs", "states", "transitions"],
+      "additionalProperties": false,
+      "properties": {
+        "initial": { "type": "string" },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/input" }
+        },
+        "states": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/state" }
+        },
+        "transitions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/transition" }
+        }
+      }
+    }
+  }
+}

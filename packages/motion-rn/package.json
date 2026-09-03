@@ -1,0 +1,20 @@
+{
+  "name": "@vibe/motion-rn",
+  "version": "0.1.0",
+  "description": "React Native + Skia runtime for .motion interactive vector animations",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "test": "esbuild runtime.test.ts --bundle --platform=node --format=esm --outfile=.runtime.test.mjs && node .runtime.test.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.73",
+    "@shopify/react-native-skia": ">=1.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "*"
+  }
+}

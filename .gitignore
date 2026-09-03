@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+public/generated/
+public/voiceover/
+.DS_Store
+.env
+.env.*
+!.env.example
+.cursor/
+.claude/

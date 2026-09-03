@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "name": "Button Press",
+    "baseWidth": 500,
+    "baseHeight": 500
+  },
+  "canvas": {
+    "shapes": [
+      {
+        "id": "btn_bg",
+        "type": "rectangle",
+        "fill": "#AE33FF",
+        "width": 240,
+        "height": 88,
+        "transform": { "x": 130, "y": 206, "scaleX": 1, "scaleY": 1, "rotation": 0 }
+      },
+      {
+        "id": "btn_glow",
+        "type": "circle",
+        "fill": "#FFFFFF",
+        "radius": 8,
+        "opacity": 0,
+        "transform": { "x": 250, "y": 250, "scaleX": 1, "scaleY": 1, "rotation": 0 }
+      }
+    ]
+  },
+  "timelines": {
+    "press": {
+      "durationMs": 140,
+      "keyframes": {
+        "btn_bg": {
+          "scaleX": [
+            { "timeMs": 0, "value": 1 },
+            { "timeMs": 140, "value": 0.94, "easing": "easeOut" }
+          ],
+          "scaleY": [
+            { "timeMs": 0, "value": 1 },
+            { "timeMs": 140, "value": 0.94, "easing": "easeOut" }
+          ],
+          "fill": [
+            { "timeMs": 0, "value": "#AE33FF" },
+            { "timeMs": 140, "value": "#7A1FB8", "easing": "linear" }
+          ]
+        },
+        "btn_glow": {
+          "opacity": [
+            { "timeMs": 0, "value": 0 },
+            { "timeMs": 70, "value": 0.55, "easing": "easeOut" },
+            { "timeMs": 140, "value": 0, "easing": "easeIn" }
+          ],
+          "scaleX": [
+            { "timeMs": 0, "value": 1 },
+            { "timeMs": 140, "value": 6, "easing": "easeOut" }
+          ],
+          "scaleY": [
+            { "timeMs": 0, "value": 1 },
+            { "timeMs": 140, "value": 6, "easing": "easeOut" }
+          ]
+        }
+      }
+    },
+    "release": {
+      "durationMs": 240,
+      "keyframes": {
+        "btn_bg": {
+          "scaleX": [
+            { "timeMs": 0, "value": 0.94 },
+            { "timeMs": 240, "value": 1, "easing": "spring" }
+          ],
+          "scaleY": [
+            { "timeMs": 0, "value": 0.94 },
+            { "timeMs": 240, "value": 1, "easing": "spring" }
+          ],
+          "fill": [
+            { "timeMs": 0, "value": "#7A1FB8" },
+            { "timeMs": 240, "value": "#AE33FF", "easing": "linear" }
+          ]
+        }
+      }
+    }
+  },
+  "stateMachine": {
+    "initial": "idle",
+    "inputs": {
+      "isPressed": { "type": "boolean", "defaultValue": false }
+    },
+    "states": {
+      "idle": { "timeline": "release" },
+      "pressed": { "timeline": "press" }
+    },
+    "transitions": [
+      { "from": "idle", "to": "pressed", "condition": "isPressed == true" },
+      { "from": "pressed", "to": "idle", "condition": "isPressed == false" }
+    ]
+  }
+}
